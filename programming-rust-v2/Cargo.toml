@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "gcd",
+    "iron-gcd",
+    "mandelbrot",
+    "basic-types"
+]
