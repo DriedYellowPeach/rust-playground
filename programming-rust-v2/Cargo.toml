@@ -4,5 +4,6 @@ members = [
     "gcd",
     "iron-gcd",
     "mandelbrot",
-    "basic-types"
+    "basic-types",
+    "trait-deref",
 ]
