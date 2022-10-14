@@ -104,3 +104,57 @@ fn test_unbox() {
     // assert_eq!(*b, "hello"); // borrow of moved value b
     assert_eq!(inner, "hello");
 }
+
+// deref coercion is done by compiler implicitly
+// and can be done many times.
+// the reason why we need this is if a pointer type can 
+// convert to another pointer type, and we need another type, so we do it automatically
+
+#[test]
+fn test_deref_coercion() {
+    fn hello(s: &str) {
+        println!("hello, {}", s);
+    }
+
+    // implict conversion &String -> &str
+    let s = String::from("me");
+    hello(&s);
+    hello(&s[..]);
+    
+    // &Box<String> -> &String -> &str
+    let m = Box::new(String::from("Rust"));
+    hello(&m);
+    hello(&(m.deref())[..]);
+}
+
+// rules of deref coercion
+// &T -> &U
+// &mut T -> &mut U
+// &mut T -> &U
+// x &T -> &mut U
+use std::ops::DerefMut;
+
+#[test]
+fn test_deref_mut() {
+    struct MyBox<T>(T);
+
+    impl<T> MyBox<T> {
+        fn new(x: T) -> Self {
+            MyBox::<T>(x)
+        }
+    }
+    
+    impl<T> Deref for MyBox<T> {
+        type Target = T;
+        fn deref(&self) -> &Self::Target {
+            &self.0
+        }
+    }
+
+    impl<T> DerefMut for MyBox<T> {
+
+        fn deref_mut(&mut self) -> &mut Self::Target {
+           &mut self.0 
+        }
+    }
+}
