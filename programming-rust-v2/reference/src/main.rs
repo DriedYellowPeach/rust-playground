@@ -48,3 +48,42 @@ fn test_rwr_a_mut_ref() {
     assert_eq!(rs, &"hello world");
     assert_eq!(rs.capacity(), 11);
 }
+
+#[test]
+fn test_use_ref_of_moved() {
+    let s = String::new();
+    let rs = &s;
+    //let ss = s;
+    assert_eq!(rs, "");
+}
+
+#[test]
+fn test_implicit_deref() {
+    struct Person(i32);
+    
+    let p = Person(5i32);
+
+    impl Person {
+        fn move_person(self) -> Self {
+            self
+        }
+    }
+
+    let rp = &p;
+    // rp.move_person(); /* cannot move out of `*rp` which is behind a shared reference */
+}
+
+#[test]
+fn test_possibly_borrowed() {
+    let x = String::new();
+    let y = String::new();
+    let mut r = &x;
+
+    if true {
+        r = &y;
+    }
+
+    // you can't move here, because x maybe borrowed, and for compiler, it must be borrowed.
+    let rs = x;
+    assert_eq!(r, "hello");
+}
