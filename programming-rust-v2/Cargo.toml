@@ -6,7 +6,7 @@ members = [
     "mandelbrot",
     "basic-types",
     "trait-deref",
-    "owner-ship",
+    "ownership",
     "reference",
     "expressions"
 ]

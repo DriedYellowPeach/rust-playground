@@ -42,6 +42,7 @@ fn possible_bipartition(n: i32, dislike: Vec<Vec<i32>>) -> bool {
             break
         }
     }
+    //println!("{}", ctx.has_loop);
 
     return !ctx.has_loop
 }
@@ -51,9 +52,10 @@ fn dfs(ctx: &mut context, node: i32, previous: i32, depth: i32) {
     if let Some(childs) = ctx.relations.get(&node) {
         for c in childs {
             if let Some(v) = ctx.seen.get(c) {
-                let previous_depth = ctx.seen.get(&previous).unwrap();
-                if *c != previous && (*previous_depth - depth) % 2 == 0{
-                    // println!("{}, {}, {}, {}", ctx.previous, node, c, *v);
+                //let previous_depth = ctx.seen.get(&previous).unwrap();
+                //let child_depth = ctx.seen.get(c).unwrap();
+                if *c != previous && (depth - v) % 2 == 0{
+                    //println!("{}, {}, {}, {}, {}", previous, node, c, *v, depth);
                     ctx.has_loop = true;
                     return
                 }
@@ -126,6 +128,54 @@ fn possible_bipartition_old(n: i32, dislike: Vec<Vec<i32>>) -> bool {
     true
 }
 
+struct Env<'a> {
+    graph: &'a HashMap<i32, Vec<i32>>,
+    colors: &'a Vec<i32>
+}
+
+fn coloring(n: i32, dislike: Vec<Vec<i32>>) -> bool {
+    use leetcode::helper::builder;
+    let graph = builder::graph_from_edges(dislike);
+    let colors = vec![0; n as usize + 1];
+    
+    for (i, v) in colors.iter().enumerate() {
+        if i == 0 {
+            continue;
+        }
+        if *v == 0 && !do_color(i as i32, 1) {
+            return false
+        }
+    }
+
+    true
+}
+
+fn do_color(env: &mut Env, node: i32, color: i32) -> bool {
+    env.colors[node as usize] = color;
+    if let Some(kids) = env.graph.get(&node) {
+        for k in kids {
+            let k_color = if color == 1 { 2 } else { 1 };
+            if env.colors[*k as usize] == color || env.colors[*k as usize] == 0 && do_color(env, *k, k_color) {
+                return false
+            }
+        }
+    }
+    true
+}
+
+#[test]
+fn test_coloring() {
+    let mut v1 = vec![vec![1,2],
+                                  vec![1, 3], 
+                                  vec![2, 4]];
+    // println!("{}", possible_bipartition(4, v));
+    assert_eq!(coloring(4, v1), true);
+    let v2 = vec![vec![1, 2], vec![2, 3], vec![3, 4], vec![4, 5], vec![1, 5]];
+    assert_eq!(coloring(4, v2), false);
+    let v3 = vec![vec![1, 2], vec![2, 3], vec![3, 4], vec![1, 4]];
+    assert_eq!(coloring(4, v3), true);
+}
+
 
 
 
@@ -139,7 +189,8 @@ fn test_possible_bipartition() {
     assert_eq!(possible_bipartition(4, v1), true);
     let v2 = vec![vec![1, 2], vec![2, 3], vec![3, 4], vec![4, 5], vec![1, 5]];
     assert_eq!(possible_bipartition(4, v2), false);
-
+    let v3 = vec![vec![1, 2], vec![2, 3], vec![3, 4], vec![1, 4]];
+    assert_eq!(possible_bipartition(4, v3), true);
 }
 
 #[test]
@@ -152,3 +203,11 @@ fn test_dislike_to_relations() {
                                   vec![2, 4]];
     println!("{:?}", dislike_to_relations(v1));
 }
+
+#[test]
+fn test_integer_range() {
+    for i in 1..5 {
+        println!("{}", i);
+    }
+}
+
