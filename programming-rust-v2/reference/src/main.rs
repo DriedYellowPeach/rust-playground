@@ -53,10 +53,19 @@ fn test_rwr_a_mut_ref() {
 fn test_use_ref_of_moved() {
     let s = String::new();
     let rs = &s;
-    //let ss = s;
+    // let ss = s; /* can't move because `s` is borrowed */
     assert_eq!(rs, "");
 }
 
+// . operator will do implicitly deref or make ref
+// what happend when a method to move the value of a implicitly derefed reference
+// (*rp).move_person()
+// you just can't move the value behind the shared reference
+
+// why can't move by deref the shared reference? 
+// I think, ref has less priority than mut ref, and owner. It's too difficult to tract the value's liften by symbol *r
+// ref can't have that priority.
+// let a variable and move of that variable can only happed in single context!
 #[test]
 fn test_implicit_deref() {
     struct Person(i32);
@@ -71,6 +80,7 @@ fn test_implicit_deref() {
 
     let rp = &p;
     // rp.move_person(); /* cannot move out of `*rp` which is behind a shared reference */
+    // let rp2 = *rp;
 }
 
 #[test]
@@ -84,6 +94,32 @@ fn test_possibly_borrowed() {
     }
 
     // you can't move here, because x maybe borrowed, and for compiler, it must be borrowed.
-    let rs = x;
+    // let rs = x;
     assert_eq!(r, "hello");
+}
+
+// #[test]
+// fn test_iter() {
+//     let x = vec![1, 2, 4];
+//     let mut iterator = x.iter();
+//     let y = x;
+
+//     assert_eq!(iterator.next(), Some(&1));
+// }
+
+
+// this a an reborrow example
+#[test]
+fn test_loop() {
+    let mut s = String::from("hello");
+    fn take(s: &mut String) {
+
+    }
+    let ss = &mut s;
+    take(ss);
+    println!("{}", ss);
+
+    for i in (0..5) {
+        take(ss);
+    }
 }
