@@ -1,4 +1,5 @@
 pub mod helper;
+pub mod data_structures;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right

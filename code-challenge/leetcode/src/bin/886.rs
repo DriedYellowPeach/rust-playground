@@ -235,6 +235,7 @@ fn coloring_with_queue(n: i32, dislikes: Vec<Vec<i32>>) -> bool {
     true
 }
 
+
 #[test]
 fn test_coloring_with_queue() {
     let mut v1 = vec![vec![1,2],
