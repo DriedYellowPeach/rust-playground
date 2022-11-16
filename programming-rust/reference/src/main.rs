@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 fn main() {
     println!("Hello, world!");
 }
@@ -122,4 +124,27 @@ fn test_loop() {
     for i in (0..5) {
         take(ss);
     }
+}
+
+// test smart pointer
+#[test]
+fn test_smart_pointer() {
+    fn display(s: &str) {
+        println!("{}", s);
+    }
+
+    let s = String::from("hello");
+    let bs = Box::new(s);
+    display(&bs);
+}
+
+#[test]
+fn test_println_take_reference() {
+    let s1 = "hello".to_string();
+    let s2 = "world!".to_string();
+
+    // println!("{:p}", &s1);
+    // println!("{:p}", &s2);
+    println!("{:p}", &s1 as &str);
+    println!("{:p}", &s2 as &str);
 }
