@@ -121,7 +121,7 @@ fn test_loop() {
     take(ss);
     println!("{}", ss);
 
-    for i in (0..5) {
+    for _i in 0..5 {
         take(ss);
     }
 }
@@ -147,4 +147,15 @@ fn test_println_take_reference() {
     // println!("{:p}", &s2);
     println!("{:p}", &s1 as &str);
     println!("{:p}", &s2 as &str);
+
+#[test]
+fn test_pointer() {
+    let s1 = "hello".to_string();
+    let s2 = "hello".to_string();
+    println!("{:p}", &s1);
+    println!("{:p}", &s2);
+    println!("{:p}", &s1 as &str);
+    println!("{:p}", &s2 as &str);
+    println!("{:p}", &*s1);
+    println!("{:p}", &*s2);
 }
