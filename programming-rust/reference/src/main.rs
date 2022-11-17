@@ -147,6 +147,10 @@ fn test_println_take_reference() {
     // println!("{:p}", &s2);
     println!("{:p}", &s1 as &str);
     println!("{:p}", &s2 as &str);
+<<<<<<< HEAD
+=======
+}
+>>>>>>> update
 
 #[test]
 fn test_pointer() {
@@ -158,4 +162,8 @@ fn test_pointer() {
     println!("{:p}", &s2 as &str);
     println!("{:p}", &*s1);
     println!("{:p}", &*s2);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> update
