@@ -62,7 +62,7 @@ fn test_float_point_types() {
     let _b = 2.;
     let _c = 1e4;
     let _d = 40f32;
-    let _e = 1.999_09_21;
+    let _e = 19.99_09_21;
 
     let f = -5.678e3;
     assert_eq!(f, -5_678_f64);
@@ -77,6 +77,49 @@ fn test_float_point_types() {
 }
 
 #[test]
-fn test_characters_type() {
+fn test_split_at() {
+    // split_at -> (&str, &str)
+    let (head, tail) = "hello world".split_at(5);
+    assert_eq!(head, "hello");
+    assert_eq!(tail, " world");
+}
+
+// everywhere comma used, rust support trailing comma
+#[test]
+fn test_extral_trailing_comma() {
+    // in struct definition
+    #[derive(Debug)]
+    struct Point {
+        x: i32,
+        y: i32, // here is a trailing comma
+    }
+
+    let p = Point {x: 1, y: 2,};
+    assert_eq!(p.x + p.y, 3);
     
+    // in enum definition
+    enum Score {
+        TwoPoint(Point),
+        ThreePoint(Point),
+        AndOne,
+        FreeThrow,
+    }
+
+    let shot = Score::ThreePoint(Point{x: 5, y: 5});
+    
+    match shot {
+        Score::TwoPoint(p) => {
+            println!("get two point from {:?}", p);
+        },
+        Score::ThreePoint(p) => {
+            println!("get three point from {:?}", p);
+        },
+        _ => {
+            println!("get one point");
+        }
+    }
+   
+    // in arrary initialization and function argument
+    let mut arr = [1, 2, 3, 4,];
+    arr.swap(1, 2,);
 }
