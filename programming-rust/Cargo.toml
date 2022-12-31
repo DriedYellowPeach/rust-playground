@@ -8,5 +8,6 @@ members = [
     "trait-deref",
     "ownership",
     "reference",
-    "expressions"
+    "expressions",
+    "rewind"
 ]
