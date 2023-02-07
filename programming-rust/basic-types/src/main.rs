@@ -123,3 +123,13 @@ fn test_extral_trailing_comma() {
     let mut arr = [1, 2, 3, 4,];
     arr.swap(1, 2,);
 }
+
+struct A<T> {
+    loads: Vec<T>
+}
+
+#[test]
+fn test_struct_a() {
+    let mut a = A::<i32> {loads: Vec::new()};
+    a.loads.push(5);
+}

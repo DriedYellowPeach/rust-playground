@@ -9,5 +9,5 @@ members = [
     "ownership",
     "reference",
     "expressions",
-    "rewind"
+    "rewind",
 ]

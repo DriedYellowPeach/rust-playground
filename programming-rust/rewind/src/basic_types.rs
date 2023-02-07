@@ -60,3 +60,9 @@ fn test_slice() {
     let v: Vec<i32> = Vec::with_capacity(5);
     let s2 = &v[..];
 }
+
+#[test]
+fn test_byte_string() {
+    let _bs = b"hello world";
+}
+
