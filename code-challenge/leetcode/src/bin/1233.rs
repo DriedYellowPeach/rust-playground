@@ -24,7 +24,7 @@ pub fn remove_subfolders(folder: Vec<String>) -> Vec<String> {
             if folder[i].len() == folder[j].len() {
                 continue;
             }
-            if folder[j].starts_with(&folder[i]) && folder[j].as_bytes()[folder[i].len()] == b'/'  {
+            if folder[j].starts_with(&folder[i]) && folder[j].as_bytes()[folder[i].len()] == b'/' {
                 to_deleted[j] = true;
                 del_cnt += 1;
             }
@@ -45,11 +45,58 @@ pub fn remove_subfolders(folder: Vec<String>) -> Vec<String> {
     final_folder
 }
 
+pub fn remove_subfolders_v2(folder: Vec<String>) -> Vec<String> {
+    let mut folder = folder;
+    let mut root_idx: Vec<usize> = vec![];
+    folder.sort();
+
+    root_idx.push(0);
+    for i in 1..folder.len() {
+        let last = &folder[*root_idx.last().unwrap()];
+        let cur = &folder[i];
+        if last.len() < cur.len() && cur.starts_with(last) && cur.as_bytes()[last.len()] == b'/' {
+            continue;
+        } 
+        root_idx.push(i);
+    }
+
+    let mut final_folder = vec![String::new();root_idx.len()];
+    for (i, &idx) in root_idx.iter().enumerate() {
+        std::mem::swap(&mut final_folder[i], &mut folder[idx]);
+    }
+
+    final_folder
+}
+
+pub fn remove_subfolders_v3(folder: Vec<String>) -> Vec<String> {
+    let mut folder = folder;
+    let mut root_idx: Vec<usize> = vec![];
+    folder.sort();
+
+    root_idx.push(0);
+    for i in 1..folder.len() {
+        let last = &folder[*root_idx.last().unwrap()];
+        let cur = &folder[i];
+        if last.len() < cur.len() && cur.starts_with(last) && cur.as_bytes()[last.len()] == b'/' {
+            continue;
+        } 
+        root_idx.push(i);
+    }
+
+    // let mut final_folder = vec![String::new();root_idx.len()];
+    for (i, &idx) in root_idx.iter().enumerate() {
+        if i != idx {
+            folder.swap(i, idx);
+        }
+    }
+
+    folder.truncate(root_idx.len());
+    folder
+}
+
 #[test]
 fn test_remove_subfolders() {
-    let to_folders = |s: &str| -> Vec<String> {
-        s.split(' ').map(|s| s.to_string()).collect()
-    };
+    let to_folders = |s: &str| -> Vec<String> { s.split(' ').map(|s| s.to_string()).collect() };
 
     let input = "/a /a/b /c/d /c/d/e /c/f";
     let output = "/a /c/d /c/f";
@@ -62,4 +109,38 @@ fn test_remove_subfolders() {
     let input = "/a/b/c /a/b/ca /a/b/d";
     let output = "/a/b/c /a/b/ca /a/b/d";
     assert_eq!(remove_subfolders(to_folders(input)), to_folders(output));
+}
+
+#[test]
+fn test_remove_subfolders_v2() {
+    let to_folders = |s: &str| -> Vec<String> { s.split(' ').map(|s| s.to_string()).collect() };
+
+    let input = "/a /a/b /c/d /c/d/e /c/f";
+    let output = "/a /c/d /c/f";
+    assert_eq!(remove_subfolders_v2(to_folders(input)), to_folders(output));
+
+    let input = "/a /a/b/c /a/b/d";
+    let output = "/a";
+    assert_eq!(remove_subfolders_v2(to_folders(input)), to_folders(output));
+
+    let input = "/a/b/c /a/b/ca /a/b/d";
+    let output = "/a/b/c /a/b/ca /a/b/d";
+    assert_eq!(remove_subfolders_v2(to_folders(input)), to_folders(output));
+}
+
+#[test]
+fn test_remove_subfolders_v3() {
+    let to_folders = |s: &str| -> Vec<String> { s.split(' ').map(|s| s.to_string()).collect() };
+
+    let input = "/a /a/b /c/d /c/d/e /c/f";
+    let output = "/a /c/d /c/f";
+    assert_eq!(remove_subfolders_v3(to_folders(input)), to_folders(output));
+
+    let input = "/a /a/b/c /a/b/d";
+    let output = "/a";
+    assert_eq!(remove_subfolders_v3(to_folders(input)), to_folders(output));
+
+    // let input = "/a/b/c /a/b/ca /a/b/d";
+    // let output = "/a/b/c /a/b/ca /a/b/d";
+    // assert_eq!(remove_subfolders_v3(to_folders(input)), to_folders(output));
 }
