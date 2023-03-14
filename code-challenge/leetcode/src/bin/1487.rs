@@ -17,8 +17,7 @@ fn get_valid_name(map: &mut HashMap<String, i32>, name: &str) -> String {
         None => {
             map.insert(name.to_string(), 1);
             return name.to_string();
-        }
-    };
+        } };
 
     let mut new_name = format!("{name}({idx})");
     while map.get(&new_name).is_some() {
