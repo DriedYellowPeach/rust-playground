@@ -3,6 +3,7 @@ fn main() {
     unimplemented!();
 }
 
+#[allow(dead_code)]
 fn restore_matrix(row_sum: Vec<i32>, col_sum: Vec<i32>) -> Vec<Vec<i32>> {
     // for element of row, col, at most be min(row_sum[row], col_sum[col])
     // left_row_sum - element left_col_sum - element
