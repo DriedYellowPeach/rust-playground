@@ -37,13 +37,6 @@ fn check_arithmetic_subarrays(nums: Vec<i32>, l: Vec<i32>, r: Vec<i32>) -> Vec<b
             seen[index as usize] = 1;
         }
 
-        let _x = 1;
-
-        // if gap == 0 {
-        //     out.push(valid);
-        //     continue;
-        // }
-
         if valid && seen.iter().all(|x| *x == 1) {
             out.push(true);
         } else {
