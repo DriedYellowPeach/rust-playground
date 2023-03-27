@@ -1,5 +1,5 @@
 // Longest Common Subsequence
-mod lcs {
+pub mod lcs {
     #[derive(Clone, Copy, Debug)]
     enum Direction {
         Up,
