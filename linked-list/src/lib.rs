@@ -151,41 +151,114 @@ pub mod v2 {
 
 // I've given thee courtesy enough
 mod v3 {
-    use std::ptr::NonNull;
+    use std::fmt::Debug;
+    use std::ops::Drop;
+    use std::ptr;
 
     struct Node<T> {
-        prev: Option<NonNull<Node<T>>>,
-        next: Option<NonNull<Node<T>>>,
+        prev: *mut Node<T>,
+        next: *mut Node<T>,
         value: T,
     }
 
     impl<T> Node<T> {
         fn new(value: T) -> Self {
             Self {
-                prev: None,
-                next: None,
+                prev: ptr::null_mut(),
+                next: ptr::null_mut(),
                 value,
             }
         }
     }
 
-    struct LinkedList<T> {
-        head: Option<NonNull<Node<T>>>,
-        tail: Option<NonNull<Node<T>>>,
+    pub struct LinkedList<T> 
+    where T: Debug
+    {
+        head: *mut Node<T>,
+        tail: *mut Node<T>,
     }
 
-    impl<T> LinkedList<T> {
-        fn new() -> Self {
+    impl<T: Debug> LinkedList<T> {
+        pub fn new() -> Self {
             Self {
-                head: None,
-                tail: None,
+                head: ptr::null_mut(),
+                tail: ptr::null_mut(),
             }
         }
 
-        fn push_front(&mut self, Value: T) {
+        pub fn push_front(&mut self, val: T) {
+            let mut new_node = Box::new(Node::new(val));
+
+            if self.head.is_null() {
+                let ptr = Box::into_raw(new_node);
+                self.head = ptr;
+                self.tail = ptr;
+            } else {
+                let old_head = self.head;
+
+                new_node.next = old_head;
+                let ptr = Box::into_raw(new_node);
+                unsafe {
+                    // safe here because old_head and new_node must be init
+                    (*old_head).prev = ptr;
+                }
+
+                self.head = ptr;
+            }
         }
 
-        fn push_back(&mut self, Value: T) {}
+        pub fn push_back(&mut self, val: T) {
+            let mut new_node = Box::new(Node::new(val));
+
+            if self.tail.is_null() {
+                let ptr = Box::into_raw(new_node);
+                self.head = ptr; 
+                self.tail = ptr;
+            } else {
+                let old_tail = self.tail;
+
+                new_node.prev = old_tail;
+                let ptr = Box::into_raw(new_node);
+                unsafe {
+                    // safe here because old_tail and new_node must be init
+                    (*old_tail).next = ptr;
+                }
+                
+                self.tail = ptr;
+
+            }
+        }
+    }
+
+    impl<T: Debug> Debug for LinkedList<T> {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            write!(f, "linked_list_v2: [")?;
+            // write!(f, "{:?}, ", n.borrow().value)?;
+            let mut ptr = self.head;
+            while !ptr.is_null() {
+                // safe here because ptr is not null
+                // write!(f, "{:?}, ", unsafe { &(*ptr).value })?;
+                unsafe {
+                    write!(f, "{:?}, ", (*ptr).value)?;
+                    ptr = (*ptr).next;
+                }
+            }
+            write!(f, "]")
+        }
+    }
+
+    impl<T: Debug> Drop for LinkedList<T> {
+        fn drop(&mut self) {
+            let mut ptr = self.head;
+            while !ptr.is_null() {
+                let b = unsafe {
+                    Box::from_raw(ptr)
+                };
+                ptr = b.next;
+                println!("drop {:?}", b.value);
+                drop(b)
+            }
+        }
     }
 }
 
@@ -232,5 +305,17 @@ mod tests {
         println!("{:?}", t.borrow().value);
         let t = t.borrow().prev.as_ref().unwrap().clone();
         println!("{:?}", t.borrow().value);
+    }
+
+    #[test]
+    fn test_linked_list_v3() {
+        let mut list = v3::LinkedList::<usize>::new();
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
+        list.push_front(4);
+        list.push_front(5);
+        list.push_front(6);
+        println!("{:?}", list);
     }
 }
