@@ -44,3 +44,12 @@ fn spin() {
         print!("{}", backspace(buf.len()));
     }
 }
+
+#[allow(dead_code)]
+fn impl_lifetime<'a>(pattern: &'a str, disturb: &str) -> impl Iterator<Item = char> + 'a {
+    if disturb == "endless" {
+        println!("log");
+    } 
+
+    pattern.chars().cycle()
+}
