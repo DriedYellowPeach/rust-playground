@@ -157,6 +157,73 @@ fn test_merge_display() {
     merge_display(nums1, nums2);
 }
 
-// fn merge_sort<T: PartialOrd + Ord>(nums: &mut [T])  {
+fn merge_sort<T: PartialOrd + Ord + Default + Copy>(nums: &mut [T], l: usize, r: usize)  {
+    if l < r {
+        let m = l + (r - l) / 2;
+        merge_sort(nums, l, m);
+        merge_sort(nums, m + 1, r);
+        merge(nums, l, m, r);
+    }
+}
 
-// }
+#[test]
+fn test_merge_sort() {
+    let mut nums = vec![5, 4, 3, 2, 1];
+    let length = nums.len();
+    merge_sort(&mut nums, 0, length - 1);
+    assert_eq!(nums, vec![1, 2, 3, 4, 5]);
+}
+
+
+fn merge<T: PartialOrd + Ord + Default + Copy>(nums: &mut [T], l: usize, m: usize, r: usize) {
+    let left_len = m - l + 1;
+    let right_len = r - m;
+
+    let mut left = Vec::new();
+    left.resize_with(left_len, T::default);
+    let mut right = Vec::new();
+    right.resize_with(right_len, T::default);
+
+    for i in l..=r {
+        if i <= m {
+            left[i - l] = nums[i];
+        } else {
+            right[i - m - 1] = nums[i];
+        }
+    }
+
+    let mut i = 0;
+    let mut j = 0;
+    let mut k = l;
+
+    while i < left_len && j < right_len {
+        if left[i] <= right[j] {
+            nums[k] = left[i];
+            i += 1;
+        } else {
+            nums[k] = right[j];
+            j += 1;
+        }
+        k += 1;
+    }
+
+    while i < left_len {
+        nums[k] = left[i];
+        i += 1;
+        k += 1;
+    }
+
+    while j < right_len {
+        nums[k] = right[j];
+        j += 1;
+        k += 1;
+    }
+}
+
+#[test]
+fn test_merge() {
+    let mut nums = vec![4, 5, 6, 7, 8, 1, 2, 3, 9, 10];
+    merge(&mut nums, 0, 4, 9);
+    assert_eq!(nums, vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+}
+

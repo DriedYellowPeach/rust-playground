@@ -8,11 +8,81 @@ pub mod lcs {
         Empty,
     }
 
+    fn display_longest_super_sequence(t: &[u8], s: &[u8], dp: &[Vec<(usize, Direction)>]) {
+        let mut i = (dp.len() - 1) as isize;
+        let mut j = (dp[0].len() - 1) as isize;
+        let mut out = Vec::new();
+
+        while i >= 0 && j >= 0 {
+            match dp[i as usize][j as usize].1 {
+                Direction::Up => {
+                    out.push(t[i as usize] as char);
+                    i -= 1;
+                }
+                Direction::Left => {
+                    out.push(s[j as usize] as char);
+                    j -= 1;
+                }
+                Direction::UpLeft => {
+                    // t[i] == s[j], so push either is ok
+                    out.push(s[j as usize] as char);
+                    i -= 1;
+                    j -= 1;
+                }
+                Direction::Empty => {
+                    break;
+                }
+            }
+        }
+
+        while i >= 0 {
+            out.push(t[i as usize] as char);
+            i -= 1;
+        }
+
+        while j >= 0 {
+            out.push(s[j as usize] as char);
+            j -= 1;
+        }
+
+        println!("{}", out.iter().rev().collect::<String>());
+    }
+
+    fn display_dp(t: &[u8], s: &[u8], dp: &[Vec<(usize, Direction)>]) {
+        for i in 0..=dp.len() {
+            for j in 0..=dp[0].len() {
+                if i == 0 && j == 0 {
+                    print!("x ");
+                    continue
+                }
+
+                if i == 0 {
+                    print!("{} ", s[j - 1] as char);
+                    continue
+                }
+
+                if j == 0 {
+                    print!("{} ", t[i - 1] as char);
+                    continue
+                }
+
+                let i = i - 1;
+                let j = j - 1;
+                match dp[i][j].1 {
+                    Direction::Up => print!("↑ "),
+                    Direction::Left => print!("← "),
+                    Direction::UpLeft => print!("↖ "),
+                    Direction::Empty => print!("o "),
+                }
+            }
+            println!();
+        }
+    }
+
     fn display_sequence(s: &[u8], dp: &[Vec<(usize, Direction)>]) {
         let mut i = (dp.len() - 1) as isize;
         let mut j = (dp[0].len() - 1) as isize;
         let mut out = Vec::new();
-        // println!("{}", String::from_utf8_lossy(s));
 
         while i >= 0 && j >= 0 {
             let (_l, d) = dp[i as usize][j as usize];
@@ -24,14 +94,11 @@ pub mod lcs {
                     j -= 1;
                 }
                 Direction::UpLeft => {
-                    // println!("{:?}", s[j as usize] as char);
                     out.push(s[j as usize] as char);
                     i -= 1;
                     j -= 1;
                 }
                 Direction::Empty => {
-                    // println!("{:?}", s[j as usize] as char);
-                    out.push(s[j as usize] as char);
                     break;
                 }
             }
@@ -45,12 +112,12 @@ pub mod lcs {
         let mut dp = vec![vec![(0, Direction::Empty); s.len()]; t.len()];
 
         // 1. init dp
-        dp[0][0] = (if t[0] == s[0] { 1 } else { 0 }, Direction::Empty);
+        dp[0][0] = (if t[0] == s[0] { 1 } else { 0 }, Direction::UpLeft);
 
         for j in 1..s.len() {
             if t[0] == s[j] {
-                dp[0][j] = (1, Direction::Empty);
-                continue
+                dp[0][j] = (1, Direction::UpLeft);
+                continue;
             }
 
             if dp[0][j - 1].0 == 1 {
@@ -60,8 +127,8 @@ pub mod lcs {
 
         for i in 1..t.len() {
             if t[i] == s[0] {
-                dp[i][0] = (1, Direction::Empty);
-                continue
+                dp[i][0] = (1, Direction::UpLeft);
+                continue;
             }
 
             if dp[i - 1][0].0 == 1 {
@@ -89,6 +156,10 @@ pub mod lcs {
 
         // 3. display
         display_sequence(s, &dp);
+        display_dp(t, s, &dp);
+        display_longest_super_sequence(t, s, &dp);
+        println!();
+        
 
         dp[t.len() - 1][s.len() - 1].0
     }
