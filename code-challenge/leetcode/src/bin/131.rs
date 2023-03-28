@@ -15,6 +15,7 @@ fn main() {
     println!("partition string into palindrome, and find all the partition solution!");
 }
 
+#[allow(dead_code)]
 fn get_palindrome_tbl(s: &str) -> Vec<Vec<bool>> {
     let s = s.as_bytes();
     let length = s.len();
@@ -26,7 +27,7 @@ fn get_palindrome_tbl(s: &str) -> Vec<Vec<bool>> {
         }
     }
 
-    return tbl
+    tbl
 }
 
 #[test]
@@ -35,6 +36,7 @@ fn test_get_palindrome_tbl() {
     println!("{:#?}", get_palindrome_tbl(s));
 }
 
+#[allow(dead_code)]
 fn partition(s: String) -> Vec<Vec<String>> {
     let tbl = get_palindrome_tbl(&s);
     let s = s.as_bytes();

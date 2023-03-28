@@ -7,20 +7,22 @@ fn main() {
     println!("find the min cut solution of palindrome partition!");
 }
 
+#[allow(dead_code)]
 fn get_partition_tbl(s: &str) -> Vec<Vec<bool>> {
     let s = s.as_bytes();
     let length = s.len();
     let mut tbl: Vec<Vec<bool>> = vec![vec![true; length]; length];
 
     for i in (0..length-1).rev() {
-        for j in (i+1..length) {
+        for j in i+1..length {
             tbl[i][j] = (s[i] == s[j]) && tbl[i+1][j-1];
         }
     }
 
-    return tbl
+    tbl
 }
 
+#[allow(dead_code)]
 fn min_cut(s: String) -> i32 {
     let tbl = get_partition_tbl(&s);
     let s = s.as_bytes();

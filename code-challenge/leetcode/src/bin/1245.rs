@@ -28,6 +28,7 @@ fn dfs(graph: &HashMap<i32, Vec<i32>>, vertex: i32, out_max: &mut i32, seen: &mu
     max_depth + 1
 }
 
+#[allow(dead_code)]
 fn tree_diameter(edges: Vec<Vec<i32>>) -> i32 {
     let graph = graph_from_edges(edges, GraphType::Multi);
     let mut seen = HashSet::<i32>::new();
