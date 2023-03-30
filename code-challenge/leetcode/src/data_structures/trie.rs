@@ -27,6 +27,16 @@ impl Node {
         }
     }
 
+    fn insert(&mut self, s: &str) {
+        let mut cur = self;
+        for c in s.chars() {
+            // we leak the box here
+            let next = *cur.children.entry(c).or_insert_with(|| Box::into_raw(Box::new(Node::new(c))));
+            cur = unsafe { &mut *next };
+        }
+    
+    }
+
     fn search<T: Iterator<Item = char>>(&self, mut pattern: T) -> bool {
         let ch = match pattern.next() {
             Some(c) => c,
@@ -45,7 +55,7 @@ impl Node {
 
 impl Drop for Node {
     fn drop(&mut self) {
-        // we free the node here
+        // we recycle the box here
         for (_, &child) in self.children.iter() {
             let child_node = unsafe { Box::from_raw(child) };
             drop(child_node);
@@ -54,36 +64,21 @@ impl Drop for Node {
 }
 
 struct Trie {
-    root: *mut Node,
+    root: Node,
 }
 
 impl Trie {
     fn new() -> Self {
-        // leak the box here
-        let root_ptr = Box::into_raw(Box::new(Node::new('^')));
-        Trie { root: root_ptr }
+        Trie { root: Node::new('^') }
     }
 
-    fn insert(&mut self, word: String) {
-        let mut cur = self.root;
-        for c in word.chars() {
-            let cur_node = unsafe { &mut *cur };
-            // go to next child if exist
-            // if not, leak the box and insert first
-            let next_node = *cur_node.children.entry(c).or_insert_with(|| Box::into_raw(Box::new(Node::new(c))));
-            cur = next_node;
-        }
+    fn insert(&mut self, s: &str) {
+        self.root.insert(s);
     }
-
 
     // print the trie
     fn display(&self) {
-        if self.root.is_null() {
-            println!("Empty trie");
-        } else {
-            let root_node = unsafe { &*self.root };
-            root_node.display_with_depth(0);
-        }
+        self.root.display_with_depth(0);
     }
 
     fn search(&self, pattern: &str) -> bool {
@@ -103,9 +98,9 @@ mod trie_tests {
     #[test]
     fn test_insert() {
         let mut trie = Trie::new();
-        trie.insert("hello".to_string());
-        trie.insert("hallo".to_string());
-        trie.insert("hala".to_string());
+        trie.insert("hello");
+        trie.insert("hallo");
+        trie.insert("hala");
         trie.display();
     }
 }
