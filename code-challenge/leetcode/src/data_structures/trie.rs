@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::ops::Drop;
 
 struct Node {
     value: char,
@@ -12,6 +13,42 @@ impl Node {
             value,
             children: HashMap::new(),
             fail: std::ptr::null(),
+        }
+    }
+
+    fn display_with_depth(&self, depth: usize) {
+        let prefix = " ".repeat(depth);
+        println!("{}{}", prefix, self.value);
+
+        // ptr is Copy
+        for (_, &child) in self.children.iter() {
+            let child_node = unsafe {& *child };
+            child_node.display_with_depth(depth + 1);
+        }
+    }
+
+    fn search<T: Iterator<Item = char>>(&self, mut pattern: T) -> bool {
+        let ch = match pattern.next() {
+            Some(c) => c,
+            None => return true,
+        };
+
+        match self.children.get(&ch) {
+            Some(&child) => {
+                let child_node = unsafe { &*child };
+                child_node.search(pattern)
+            },
+            None => false,
+        }
+    }
+}
+
+impl Drop for Node {
+    fn drop(&mut self) {
+        // we free the node here
+        for (_, &child) in self.children.iter() {
+            let child_node = unsafe { Box::from_raw(child) };
+            drop(child_node);
         }
     }
 }
@@ -38,9 +75,24 @@ impl Trie {
         }
     }
 
+
     // print the trie
     fn display(&self) {
+        if self.root.is_null() {
+            println!("Empty trie");
+        } else {
+            let root_node = unsafe { &*self.root };
+            root_node.display_with_depth(0);
+        }
+    }
 
+    fn search(&self, pattern: &str) -> bool {
+        true
+    }
+}
+
+impl Drop for Trie {
+    fn drop(&mut self) {
     }
 }
 
@@ -52,5 +104,8 @@ mod trie_tests {
     fn test_insert() {
         let mut trie = Trie::new();
         trie.insert("hello".to_string());
+        trie.insert("hallo".to_string());
+        trie.insert("hala".to_string());
+        trie.display();
     }
 }
