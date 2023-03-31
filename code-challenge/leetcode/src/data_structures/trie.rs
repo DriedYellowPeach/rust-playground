@@ -22,7 +22,7 @@ impl Node {
 
         // ptr is Copy
         for (_, &child) in self.children.iter() {
-            let child_node = unsafe {& *child };
+            let child_node = unsafe { &*child };
             child_node.display_with_depth(depth + 1);
         }
     }
@@ -31,10 +31,12 @@ impl Node {
         let mut cur = self;
         for c in s.chars() {
             // we leak the box here
-            let next = *cur.children.entry(c).or_insert_with(|| Box::into_raw(Box::new(Node::new(c))));
+            let next = *cur
+                .children
+                .entry(c)
+                .or_insert_with(|| Box::into_raw(Box::new(Node::new(c))));
             cur = unsafe { &mut *next };
         }
-    
     }
 
     fn search<T: Iterator<Item = char>>(&self, mut pattern: T) -> bool {
@@ -47,7 +49,7 @@ impl Node {
             Some(&child) => {
                 let child_node = unsafe { &*child };
                 child_node.search(pattern)
-            },
+            }
             None => false,
         }
     }
@@ -69,7 +71,9 @@ struct Trie {
 
 impl Trie {
     fn new() -> Self {
-        Trie { root: Node::new('^') }
+        Trie {
+            root: Node::new('^'),
+        }
     }
 
     fn insert(&mut self, s: &str) {
@@ -87,8 +91,7 @@ impl Trie {
 }
 
 impl Drop for Trie {
-    fn drop(&mut self) {
-    }
+    fn drop(&mut self) {}
 }
 
 #[cfg(test)]
