@@ -5,6 +5,7 @@ fn main() {
 use std::collections::{HashSet, HashMap, VecDeque};
 use std::hash::Hash;
 
+#[allow(dead_code)]
 fn valid_tree(n: i32, edges: Vec<Vec<i32>>) -> bool {
     if edges.len() != (n - 1) as usize {
         return false;
@@ -43,6 +44,7 @@ fn valid_tree(n: i32, edges: Vec<Vec<i32>>) -> bool {
     return seen.iter().all(|n| n == &1);
 }
 
+#[allow(dead_code)]
 fn edges_to_graph<T>(edges: Vec<Vec<T>>) -> HashMap<T, HashSet<T>>
 where
     T: Hash + PartialEq + Copy + Eq,

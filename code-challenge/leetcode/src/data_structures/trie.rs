@@ -70,9 +70,7 @@ struct Trie {
 }
 
 impl Trie {
-    fn new() -> Self {
-        Trie {
-            root: Node::new('^'),
+    fn new() -> Self { Trie { root: Node::new('^'),
         }
     }
 
