@@ -1,8 +1,5 @@
 #[allow(dead_code)]
 fn add_negbinary(arr1: Vec<i32>, arr2: Vec<i32>) -> Vec<i32> {
-    // let sum1 = arr1.iter().fold(0, |acc, x| acc * -2 + x);
-    // let sum2 = arr2.iter().fold(0, |acc, x| acc * -2 + x);
-
     let mut sum =
         arr1.iter().fold(0, |acc, x| acc * -2 + x) + arr2.iter().fold(0, |acc, x| acc * -2 + x);
 
@@ -11,7 +8,7 @@ fn add_negbinary(arr1: Vec<i32>, arr2: Vec<i32>) -> Vec<i32> {
     }
 
     let mut ans = vec![];
-    let mut rem = 0;
+    let mut rem;
 
     while sum != 1 {
         (sum, rem) = my_mod(sum, -2);
