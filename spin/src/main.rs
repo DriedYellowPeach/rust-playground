@@ -49,7 +49,7 @@ fn spin() {
 fn impl_lifetime<'a>(pattern: &'a str, disturb: &str) -> impl Iterator<Item = char> + 'a {
     if disturb == "endless" {
         println!("log");
-    } 
+    }
 
     pattern.chars().cycle()
 }

@@ -25,8 +25,6 @@ fn prev_perm_opt1(arr: Vec<i32>) -> Vec<i32> {
         i -= 1;
     }
 
-    // println!("{} {}", i, j);
-
     arr.swap(i as usize, j as usize);
 
     arr
