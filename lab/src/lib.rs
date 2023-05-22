@@ -2,6 +2,7 @@
 pub mod deref_example;
 pub mod iter_partition_example;
 pub mod default_example;
+pub mod associated_type_example;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
