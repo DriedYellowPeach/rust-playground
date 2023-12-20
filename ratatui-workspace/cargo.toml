@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "hello-ratatui",
+    "hello-tui-counter",
+    "hello-counter-multifile",
+    "hello-json-editor",
+    "hello-async-counter",
+    "chat",
+]

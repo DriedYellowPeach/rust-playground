@@ -1,11 +1,3 @@
-#![allow(dead_code)]
-pub mod deref_example;
-pub mod iter_partition_example;
-pub mod default_example;
-pub mod associated_type_example;
-pub mod from_into_example;
-pub mod pattern_match;
-
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }

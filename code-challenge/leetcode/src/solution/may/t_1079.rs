@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 
 #[allow(dead_code)]
 fn num_tile_possibilities(tiles: String) -> i32 {
